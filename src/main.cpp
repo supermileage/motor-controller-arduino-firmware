@@ -22,21 +22,21 @@ void setup() {
     // Set timer mode to PWM Phase Correct
     TCCR0A = ((TCCR0A & 0b11111100) | 0x01);
     // configure complementary pwm on low side
-    TCCR0A = 0b10110000 | (TCCR0A & 0b00001111);
+    TCCR0A = (TCCR0A & 0b00001111) | 0b10110000;
     // set prescaler to 1 - 32kHz
-    TCCR0B = ((TCCR0B & 0b11110000) | 0x01); 
+    TCCR0B = ((TCCR0B & 0b11110000) | 0x01);
 
     // Timer1 controls pins 9, 10
-    // set prescaler to 1 - 32kHz
-    TCCR1B = ((TCCR1B & 0b11110000) | 0x01); 
     // configure complementary pwm on low side
-    TCCR1A = 0b11100000 | (TCCR1A & 0b00001111);
+    TCCR1A = (TCCR1A & 0b00001111) | 0b11100000;
+    // set prescaler to 1 - 32kHz
+    TCCR1B = ((TCCR1B & 0b11110000) | 0x01);
 
     // Timer2 controls pins 3, 11
-    // set prescaler to 1 - 32kHz
-    TCCR2B = ((TCCR2B & 0b11110000) | 0x01); 
     // configure complementary pwm on low side
-    TCCR2A = 0b11100000 | (TCCR2A & 0b00001111);
+    TCCR2A = (TCCR2A & 0b00001111) | 0b11100000;
+    // set prescaler to 1 - 32kHz
+    TCCR2B = ((TCCR2B & 0b11110000) | 0x01);
 
     pinMode(PIN_MOSFET_A_LO, OUTPUT);
     pinMode(PIN_MOSFET_A_HI, OUTPUT);
@@ -52,7 +52,6 @@ void setup() {
     pinMode(PIN_HALL_C, INPUT_PULLUP);
 
     // Serial.begin(9600);
-
 }
 
 void loop() {

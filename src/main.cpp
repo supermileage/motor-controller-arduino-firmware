@@ -43,6 +43,15 @@ void setup() {
     pinMode(PIN_MOSFET_C_LO, OUTPUT);
     pinMode(PIN_MOSFET_C_HI, OUTPUT);
 
+    analogWrite(PIN_MOSFET_A_LO, 0);
+    analogWrite(PIN_MOSFET_A_HI, 0);
+
+    analogWrite(PIN_MOSFET_B_HI, 0);
+    analogWrite(PIN_MOSFET_B_LO, 0);
+
+    analogWrite(PIN_MOSFET_C_LO, 0);
+    analogWrite(PIN_MOSFET_C_HI, 0);
+
     pinMode(PIN_HALL_A, INPUT_PULLUP);
     pinMode(PIN_HALL_B, INPUT_PULLUP);
     pinMode(PIN_HALL_C, INPUT_PULLUP);
@@ -73,8 +82,8 @@ void loop() {
         analogWrite(PIN_MOSFET_A_LO, 0);
         analogWrite(PIN_MOSFET_A_HI, 0);
 
-        analogWrite(PIN_MOSFET_B_LO, dutyCycle);
         analogWrite(PIN_MOSFET_B_HI, 0);
+        analogWrite(PIN_MOSFET_B_LO, dutyCycle);
 
         analogWrite(PIN_MOSFET_C_LO, 0);
         analogWrite(PIN_MOSFET_C_HI, dutyCycle);
@@ -82,8 +91,8 @@ void loop() {
         analogWrite(PIN_MOSFET_A_LO, 0);
         analogWrite(PIN_MOSFET_A_HI, dutyCycle);
 
-        analogWrite(PIN_MOSFET_B_LO, dutyCycle);
         analogWrite(PIN_MOSFET_B_HI, 0);
+        analogWrite(PIN_MOSFET_B_LO, dutyCycle);
 
         analogWrite(PIN_MOSFET_C_LO, 0);
         analogWrite(PIN_MOSFET_C_HI, 0);
@@ -94,8 +103,8 @@ void loop() {
         analogWrite(PIN_MOSFET_B_LO, 0);
         analogWrite(PIN_MOSFET_B_HI, 0);
 
-        analogWrite(PIN_MOSFET_C_LO, dutyCycle);
         analogWrite(PIN_MOSFET_C_HI, 0);
+        analogWrite(PIN_MOSFET_C_LO, dutyCycle);
     } else if (!hallA && hallB && !hallC) {
         analogWrite(PIN_MOSFET_A_LO, 0);
         analogWrite(PIN_MOSFET_A_HI, 0);
@@ -103,11 +112,11 @@ void loop() {
         analogWrite(PIN_MOSFET_B_LO, 0);
         analogWrite(PIN_MOSFET_B_HI, dutyCycle);
 
-        analogWrite(PIN_MOSFET_C_LO, dutyCycle);
         analogWrite(PIN_MOSFET_C_HI, 0);
+        analogWrite(PIN_MOSFET_C_LO, dutyCycle);
     } else if (!hallA && hallB && hallC) {
-        analogWrite(PIN_MOSFET_A_LO, dutyCycle);
         analogWrite(PIN_MOSFET_A_HI, 0);
+        analogWrite(PIN_MOSFET_A_LO, dutyCycle);
 
         analogWrite(PIN_MOSFET_B_LO, 0);
         analogWrite(PIN_MOSFET_B_HI, dutyCycle);
@@ -115,8 +124,8 @@ void loop() {
         analogWrite(PIN_MOSFET_C_LO, 0);
         analogWrite(PIN_MOSFET_C_HI, 0);
     } else if (!hallA && !hallB && hallC) {
-        analogWrite(PIN_MOSFET_A_LO, dutyCycle);
         analogWrite(PIN_MOSFET_A_HI, 0);
+        analogWrite(PIN_MOSFET_A_LO, dutyCycle);
 
         analogWrite(PIN_MOSFET_B_LO, 0);
         analogWrite(PIN_MOSFET_B_HI, 0);

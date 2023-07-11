@@ -30,7 +30,7 @@ jobs:
         uses: actions/checkout@main
 
       - name: Setup Arduino CLI
-        uses: arduino/setup-arduino-cli@v1.1.2
+        uses: arduino/setup-arduino-cli@v1.1.1
       
       - name: Install platform
         run: |

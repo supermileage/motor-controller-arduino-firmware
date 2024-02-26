@@ -2,7 +2,11 @@
 #include "Arduino.h"
 
 // This must be set to 0 in order to run motor
+#define DEBUG_MODE 0
 #define HALL_DEBUG_MODE 0
+#define HI_LO_DEBUG_MODE 0
+#define THROTTLE_DEBUG_MODE 0
+
 
 #define PIN_MOSFET_A_LO 11
 #define PIN_MOSFET_A_HI 10
@@ -56,27 +60,67 @@ void setup() {
     pinMode(PIN_HALL_B, INPUT_PULLUP);
     pinMode(PIN_HALL_C, INPUT_PULLUP);
 
-    if (HALL_DEBUG_MODE) {
+    if (DEBUG_MODE) {
+        Serial.begin(9600);
+    }
+    if (HI_LO_DEBUG_MODE) {
         Serial.begin(9600);
     }
 }
 
+int counter = 0;
+
 void loop() {
     bool hallA = digitalRead(PIN_HALL_A);
     bool hallB = digitalRead(PIN_HALL_B);
-    bool hallC = digitalRead(PIN_HALL_C);
+    bool hallC = digitalRead(PIN_HALL_C); 
+  
 
-    if (HALL_DEBUG_MODE) {
-        Serial.print("hallA: ");
-        Serial.print(hallA);
-        Serial.print(" - hallB: ");
-        Serial.print(hallB);
-        Serial.print(" - hallC: ");
-        Serial.println(hallC);
-    }
-
+    
+    
     // Reading from potentiometer
     int dutyCycle = analogRead(PIN_THROTTLE) / 4;
+
+    //int Throttle = analogRead(A4);
+    if(DEBUG_MODE){
+        counter++;
+        if(counter == 100){
+            counter = 0;
+            if (HALL_DEBUG_MODE) {
+                Serial.print("hallA: ");
+                Serial.print(hallA);
+                Serial.print(" - hallB: ");
+                Serial.print(hallB);
+                Serial.print(" - hallC: ");
+                Serial.println(hallC);
+            }
+            if (HI_LO_DEBUG_MODE){
+                int A_HI = analogRead(PIN_MOSFET_A_HI);
+                int A_LO = analogRead(PIN_MOSFET_A_LO);
+                int B_HI = analogRead(PIN_MOSFET_B_HI);
+                int B_LO = analogRead(PIN_MOSFET_B_LO);
+                int C_HI = analogRead(PIN_MOSFET_C_HI);
+                int C_LO = analogRead(PIN_MOSFET_C_LO);
+
+                Serial.print("Pin Mosfet A Hi: ");
+                Serial.print(A_HI);
+                Serial.print("  -  Pin Mosfet A LO: ");
+                Serial.print(A_LO);
+                Serial.print("  Pin Mosfet B Hi: ");
+                Serial.print(B_HI);
+                Serial.print("  -  Pin Mosfet B LO: ");
+                Serial.print(B_LO);
+                Serial.print("  Pin Mosfet C Hi: ");
+                Serial.print(C_HI);
+                Serial.print("  -  Pin Mosfet C LO: ");
+                Serial.println(C_LO);
+            }
+            if(THROTTLE_DEBUG_MODE){
+                Serial.print("Throttle output: ");
+                Serial.println(dutyCycle);
+            }
+        }
+    }
 
     if (hallA && !hallB && hallC) {
         analogWrite(PIN_MOSFET_A_LO, 0);

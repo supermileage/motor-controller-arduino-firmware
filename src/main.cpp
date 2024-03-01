@@ -61,6 +61,10 @@ void setup() {
     }
 }
 
+unsigned long prevTime = 0;
+unsigned long currentTime = 0;
+bool prevHallA = digitalRead(PIN_HALL_A);
+
 void loop() {
     bool hallA = digitalRead(PIN_HALL_A);
     bool hallB = digitalRead(PIN_HALL_B);
@@ -75,8 +79,25 @@ void loop() {
         Serial.println(hallC);
     }
 
+    int maxDutyCycle = 40;
     // Reading from potentiometer
     int dutyCycle = analogRead(PIN_THROTTLE) / 4;
+
+    if (hallA != prevHallA) {
+        currentTime = millis();
+        unsigned long elapsedTime = currentTime - prevTime;
+        prevTime = currentTime;
+
+        prevHallA = hallA;
+        unsigned long rpm = 60000 / (elapsedTime * 18 / 360);
+
+        // Scaling the duty cycle based on RPM
+        maxDutyCycle = map(rpm, 0, 8000, 40, 103);
+    }
+
+    if (dutyCycle > maxDutyCycle) {
+        dutyCycle = maxDutyCycle;
+    }
 
     if (hallA && !hallB && hallC) {
         analogWrite(PIN_MOSFET_A_LO, 0);

@@ -24,6 +24,9 @@
 #define PIN_THROTTLE A4
 
 void setup() {
+
+    GTCCR = (1<<TSM)|(1<<PSRASY)|(1<<PSRSYNC); // halt all timers
+
     // Timer0 controls pins 5, 6
     // Set timer mode to PWM Phase Correct
     TCCR0A = ((TCCR0A & 0b11111100) | 0x01);
@@ -37,6 +40,14 @@ void setup() {
     // Timer2 controls pins 3, 11
     // set prescaler to 1 - 32kHz
     TCCR2B = ((TCCR2B & 0b11110000) | 0x01);
+
+    // set all timers to the same value
+    TCNT0 = 0; // set timer0 to 0
+    TCNT1H = 0; // set timer1 high byte to 0
+    TCNT1L = 0; // set timer1 low byte to 0
+    TCNT2 = 0; // set timer2 to 0
+    
+    GTCCR = 0; // release all timers
 
     pinMode(PIN_MOSFET_A_LO, OUTPUT);
     pinMode(PIN_MOSFET_A_HI, OUTPUT);
@@ -75,16 +86,13 @@ void loop() {
     bool hallB = digitalRead(PIN_HALL_B);
     bool hallC = digitalRead(PIN_HALL_C); 
   
-
-    
-    
     // Reading from potentiometer
     int dutyCycle = analogRead(PIN_THROTTLE) / 4;
 
     //int Throttle = analogRead(A4);
-    if(DEBUG_MODE){
+    if (DEBUG_MODE){
         counter++;
-        if(counter == 100){
+        if (counter == 100){
             counter = 0;
             if (HALL_DEBUG_MODE) {
                 Serial.print("hallA: ");
@@ -115,7 +123,7 @@ void loop() {
                 Serial.print("  -  Pin Mosfet C LO: ");
                 Serial.println(C_LO);
             }
-            if(THROTTLE_DEBUG_MODE){
+            if (THROTTLE_DEBUG_MODE){
                 Serial.print("Throttle output: ");
                 Serial.println(dutyCycle);
             }
@@ -127,54 +135,60 @@ void loop() {
         analogWrite(PIN_MOSFET_A_HI, 0);
 
         analogWrite(PIN_MOSFET_B_HI, 0);
-        analogWrite(PIN_MOSFET_B_LO, dutyCycle);
 
         analogWrite(PIN_MOSFET_C_LO, 0);
+
+        analogWrite(PIN_MOSFET_B_LO, dutyCycle);
         analogWrite(PIN_MOSFET_C_HI, dutyCycle);
     } else if (hallA && !hallB && !hallC) {
         analogWrite(PIN_MOSFET_A_LO, 0);
-        analogWrite(PIN_MOSFET_A_HI, dutyCycle);
 
         analogWrite(PIN_MOSFET_B_HI, 0);
-        analogWrite(PIN_MOSFET_B_LO, dutyCycle);
 
         analogWrite(PIN_MOSFET_C_LO, 0);
         analogWrite(PIN_MOSFET_C_HI, 0);
+
+        analogWrite(PIN_MOSFET_A_HI, dutyCycle);
+        analogWrite(PIN_MOSFET_B_LO, dutyCycle);
     } else if (hallA && hallB && !hallC) {
         analogWrite(PIN_MOSFET_A_LO, 0);
-        analogWrite(PIN_MOSFET_A_HI, dutyCycle);
 
         analogWrite(PIN_MOSFET_B_LO, 0);
         analogWrite(PIN_MOSFET_B_HI, 0);
 
         analogWrite(PIN_MOSFET_C_HI, 0);
+
+        analogWrite(PIN_MOSFET_A_HI, dutyCycle);
         analogWrite(PIN_MOSFET_C_LO, dutyCycle);
     } else if (!hallA && hallB && !hallC) {
         analogWrite(PIN_MOSFET_A_LO, 0);
         analogWrite(PIN_MOSFET_A_HI, 0);
 
         analogWrite(PIN_MOSFET_B_LO, 0);
-        analogWrite(PIN_MOSFET_B_HI, dutyCycle);
 
         analogWrite(PIN_MOSFET_C_HI, 0);
+
+        analogWrite(PIN_MOSFET_B_HI, dutyCycle);
         analogWrite(PIN_MOSFET_C_LO, dutyCycle);
     } else if (!hallA && hallB && hallC) {
         analogWrite(PIN_MOSFET_A_HI, 0);
-        analogWrite(PIN_MOSFET_A_LO, dutyCycle);
 
         analogWrite(PIN_MOSFET_B_LO, 0);
-        analogWrite(PIN_MOSFET_B_HI, dutyCycle);
 
         analogWrite(PIN_MOSFET_C_LO, 0);
         analogWrite(PIN_MOSFET_C_HI, 0);
+
+        analogWrite(PIN_MOSFET_A_LO, dutyCycle);
+        analogWrite(PIN_MOSFET_B_HI, dutyCycle);
     } else if (!hallA && !hallB && hallC) {
         analogWrite(PIN_MOSFET_A_HI, 0);
-        analogWrite(PIN_MOSFET_A_LO, dutyCycle);
 
         analogWrite(PIN_MOSFET_B_LO, 0);
         analogWrite(PIN_MOSFET_B_HI, 0);
 
         analogWrite(PIN_MOSFET_C_LO, 0);
+
+        analogWrite(PIN_MOSFET_A_LO, dutyCycle);
         analogWrite(PIN_MOSFET_C_HI, dutyCycle);
     }
 }

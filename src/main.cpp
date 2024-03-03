@@ -87,7 +87,13 @@ void loop() {
     bool hallC = digitalRead(PIN_HALL_C); 
   
     // Reading from potentiometer
-    int dutyCycle = analogRead(PIN_THROTTLE) / 4;
+    int reading = analogRead(PIN_THROTTLE);
+
+    int dutyCycle = (reading / 8) + 92;
+
+    if (dutyCycle < 105) {
+        dutyCycle = 0;
+    }
 
     //int Throttle = analogRead(A4);
     if (DEBUG_MODE){
@@ -125,6 +131,8 @@ void loop() {
             }
             if (THROTTLE_DEBUG_MODE){
                 Serial.print("Throttle output: ");
+                Serial.print(reading);
+                Serial.print(" - Duty Cycle: ");
                 Serial.println(dutyCycle);
             }
         }

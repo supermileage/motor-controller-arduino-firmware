@@ -117,6 +117,7 @@ void loop() {
 
     if (dutyCycle > maxDutyCycle) {
         dutyCycle = maxDutyCycle;
+    }
 
     //int Throttle = analogRead(A4);
     if (DEBUG_MODE){

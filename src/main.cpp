@@ -90,15 +90,6 @@ void loop() {
     bool hallB = digitalRead(PIN_HALL_B);
     bool hallC = digitalRead(PIN_HALL_C);
 
-    if (HALL_DEBUG_MODE) {
-        Serial.print("hallA: ");
-        Serial.print(hallA);
-        Serial.print(" - hallB: ");
-        Serial.print(hallB);
-        Serial.print(" - hallC: ");
-        Serial.println(hallC);
-    }
-
     int maxDutyCycle = 40;
     // Reading from potentiometer
     int dutyCycle = analogRead(PIN_THROTTLE) / 4;

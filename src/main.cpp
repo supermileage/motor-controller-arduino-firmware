@@ -8,18 +8,20 @@
 #define THROTTLE_DEBUG_MODE 0
 
 
-#define PIN_MOSFET_A_LO 11
-#define PIN_MOSFET_A_HI 10
+#define PIN_MOSFET_A_LO 11 // 11
+#define PIN_MOSFET_A_HI 10 // 10
 
-#define PIN_MOSFET_B_LO 9
-#define PIN_MOSFET_B_HI 6
+#define PIN_MOSFET_B_LO 5 // 9
+#define PIN_MOSFET_B_HI 3 // 6
 
-#define PIN_MOSFET_C_LO 5
-#define PIN_MOSFET_C_HI 3
+#define PIN_MOSFET_C_LO 9 // 5
+#define PIN_MOSFET_C_HI 6 // 3
 
-#define PIN_HALL_A A1
+#define PIN_HALL_A A3
 #define PIN_HALL_B A2
-#define PIN_HALL_C A3
+#define PIN_HALL_C A1
+
+#define PIN_TEST_DRIVE 7
 
 #define PIN_THROTTLE A4
 
@@ -71,6 +73,8 @@ void setup() {
     pinMode(PIN_HALL_B, INPUT_PULLUP);
     pinMode(PIN_HALL_C, INPUT_PULLUP);
 
+    pinMode(PIN_TEST_DRIVE, INPUT_PULLUP);
+
     if (DEBUG_MODE) {
         Serial.begin(9600);
     }
@@ -89,10 +93,10 @@ void loop() {
     // Reading from potentiometer
     int reading = analogRead(PIN_THROTTLE);
 
-    int dutyCycle = (reading / 8) + 92;
+    int dutyCycle = (reading / 4);
 
-    if (dutyCycle < 105) {
-        dutyCycle = 0;
+    if (digitalRead(PIN_TEST_DRIVE) == LOW){
+        dutyCycle = 70;
     }
 
     //int Throttle = analogRead(A4);
@@ -137,8 +141,7 @@ void loop() {
             }
         }
     }
-
-    if (hallA && !hallB && hallC) {
+    if (hallA && hallB && hallC) {
         analogWrite(PIN_MOSFET_A_LO, 0);
         analogWrite(PIN_MOSFET_A_HI, 0);
 
@@ -146,7 +149,27 @@ void loop() {
 
         analogWrite(PIN_MOSFET_C_LO, 0);
 
-        analogWrite(PIN_MOSFET_B_LO, dutyCycle);
+        analogWrite(PIN_MOSFET_B_LO, 0);
+        analogWrite(PIN_MOSFET_C_HI, 0);
+        } else if (!hallA && !hallB && !hallC) {
+        analogWrite(PIN_MOSFET_A_LO, 0);
+        analogWrite(PIN_MOSFET_A_HI, 0);
+
+        analogWrite(PIN_MOSFET_B_HI, 0);
+
+        analogWrite(PIN_MOSFET_C_LO, 0);
+
+        analogWrite(PIN_MOSFET_B_LO, 0);
+        analogWrite(PIN_MOSFET_C_HI, 0);
+    } else if (hallA && !hallB && hallC) {
+        analogWrite(PIN_MOSFET_A_LO, 0);
+        analogWrite(PIN_MOSFET_A_HI, 0);
+
+        analogWrite(PIN_MOSFET_B_HI, 0);
+
+        analogWrite(PIN_MOSFET_C_LO, 0);
+
+        digitalWrite(PIN_MOSFET_B_LO, HIGH);
         analogWrite(PIN_MOSFET_C_HI, dutyCycle);
     } else if (hallA && !hallB && !hallC) {
         analogWrite(PIN_MOSFET_A_LO, 0);
@@ -157,7 +180,7 @@ void loop() {
         analogWrite(PIN_MOSFET_C_HI, 0);
 
         analogWrite(PIN_MOSFET_A_HI, dutyCycle);
-        analogWrite(PIN_MOSFET_B_LO, dutyCycle);
+        digitalWrite(PIN_MOSFET_B_LO, HIGH);
     } else if (hallA && hallB && !hallC) {
         analogWrite(PIN_MOSFET_A_LO, 0);
 
@@ -167,7 +190,7 @@ void loop() {
         analogWrite(PIN_MOSFET_C_HI, 0);
 
         analogWrite(PIN_MOSFET_A_HI, dutyCycle);
-        analogWrite(PIN_MOSFET_C_LO, dutyCycle);
+        digitalWrite(PIN_MOSFET_C_LO, HIGH);
     } else if (!hallA && hallB && !hallC) {
         analogWrite(PIN_MOSFET_A_LO, 0);
         analogWrite(PIN_MOSFET_A_HI, 0);
@@ -177,7 +200,7 @@ void loop() {
         analogWrite(PIN_MOSFET_C_HI, 0);
 
         analogWrite(PIN_MOSFET_B_HI, dutyCycle);
-        analogWrite(PIN_MOSFET_C_LO, dutyCycle);
+        digitalWrite(PIN_MOSFET_C_LO, HIGH);
     } else if (!hallA && hallB && hallC) {
         analogWrite(PIN_MOSFET_A_HI, 0);
 
@@ -186,7 +209,7 @@ void loop() {
         analogWrite(PIN_MOSFET_C_LO, 0);
         analogWrite(PIN_MOSFET_C_HI, 0);
 
-        analogWrite(PIN_MOSFET_A_LO, dutyCycle);
+        digitalWrite(PIN_MOSFET_A_LO, HIGH);
         analogWrite(PIN_MOSFET_B_HI, dutyCycle);
     } else if (!hallA && !hallB && hallC) {
         analogWrite(PIN_MOSFET_A_HI, 0);
@@ -196,7 +219,7 @@ void loop() {
 
         analogWrite(PIN_MOSFET_C_LO, 0);
 
-        analogWrite(PIN_MOSFET_A_LO, dutyCycle);
+        digitalWrite(PIN_MOSFET_A_LO, HIGH);
         analogWrite(PIN_MOSFET_C_HI, dutyCycle);
     }
 }

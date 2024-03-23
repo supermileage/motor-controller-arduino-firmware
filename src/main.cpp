@@ -83,13 +83,18 @@ void setup() {
     }
 }
 
+unsigned long prevTime = 0;
+unsigned long currentTime = 0;
+bool prevHallA = digitalRead(PIN_HALL_A);
+
 int counter = 0;
 
 void loop() {
     bool hallA = digitalRead(PIN_HALL_A);
     bool hallB = digitalRead(PIN_HALL_B);
-    bool hallC = digitalRead(PIN_HALL_C); 
-  
+    bool hallC = digitalRead(PIN_HALL_C);
+
+    int maxDutyCycle = 40;
     // Reading from potentiometer
     int reading = analogRead(PIN_THROTTLE);
 
@@ -97,6 +102,22 @@ void loop() {
 
     if (digitalRead(PIN_TEST_DRIVE) == LOW){
         dutyCycle = 70;
+    }
+
+    if (hallA != prevHallA) {
+        currentTime = millis();
+        unsigned long elapsedTime = currentTime - prevTime;
+        prevTime = currentTime;
+
+        prevHallA = hallA;
+        unsigned long rpm = 60000 / (elapsedTime * 18 / 360);
+
+        // Scaling the duty cycle based on RPM
+        maxDutyCycle = map(rpm, 0, 8000, 40, 103);
+    }
+
+    if (dutyCycle > maxDutyCycle) {
+        dutyCycle = maxDutyCycle;
     }
 
     //int Throttle = analogRead(A4);

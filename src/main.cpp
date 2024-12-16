@@ -83,7 +83,9 @@ void setup() {
     }
 }
 
-int counter = 0;
+int rpm=0;
+int timeold=0;
+int counter=0;
 
 void loop() {
     bool hallA = digitalRead(PIN_HALL_A);
@@ -97,6 +99,10 @@ void loop() {
 
     if (digitalRead(PIN_TEST_DRIVE) == LOW){
         dutyCycle = 70;
+    }
+    
+    if(rpm == 0){
+        dutyCycle *= 0.25;
     }
 
     //int Throttle = analogRead(A4);
@@ -162,6 +168,8 @@ void loop() {
         analogWrite(PIN_MOSFET_B_LO, 0);
         analogWrite(PIN_MOSFET_C_HI, 0);
     } else if (hallA && !hallB && hallC) {
+        rpm = 60000.0/(millis()-timeold);
+        timeold = millis();
         analogWrite(PIN_MOSFET_A_LO, 0);
         analogWrite(PIN_MOSFET_A_HI, 0);
 

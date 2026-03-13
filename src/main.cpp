@@ -89,6 +89,7 @@ void loop() {
     bool hallA = digitalRead(PIN_HALL_A);
     bool hallB = digitalRead(PIN_HALL_B);
     bool hallC = digitalRead(PIN_HALL_C); 
+    uint8_t hallState = ((!hallA) << 2) | ((!hallB) << 1) | (!hallC);
   
     // Reading from potentiometer
     int reading = analogRead(PIN_THROTTLE);
@@ -141,85 +142,68 @@ void loop() {
             }
         }
     }
-    if (hallA && hallB && hallC) {
+    switch (hallState) {
+    case 0b010:
         analogWrite(PIN_MOSFET_A_LO, 0);
         analogWrite(PIN_MOSFET_A_HI, 0);
-
-        analogWrite(PIN_MOSFET_B_HI, 0);
-
-        analogWrite(PIN_MOSFET_C_LO, 0);
-
         analogWrite(PIN_MOSFET_B_LO, 0);
-        analogWrite(PIN_MOSFET_C_HI, 0);
-        } else if (!hallA && !hallB && !hallC) {
-        analogWrite(PIN_MOSFET_A_LO, 0);
-        analogWrite(PIN_MOSFET_A_HI, 0);
-
-        analogWrite(PIN_MOSFET_B_HI, 0);
-
-        analogWrite(PIN_MOSFET_C_LO, 0);
-
-        analogWrite(PIN_MOSFET_B_LO, 0);
-        analogWrite(PIN_MOSFET_C_HI, 0);
-    } else if (hallA && !hallB && hallC) {
-        analogWrite(PIN_MOSFET_A_LO, 0);
-        analogWrite(PIN_MOSFET_A_HI, 0);
-
-        analogWrite(PIN_MOSFET_B_HI, 0);
-
-        analogWrite(PIN_MOSFET_C_LO, 0);
-
-        digitalWrite(PIN_MOSFET_B_LO, HIGH);
-        analogWrite(PIN_MOSFET_C_HI, dutyCycle);
-    } else if (hallA && !hallB && !hallC) {
-        analogWrite(PIN_MOSFET_A_LO, 0);
-
-        analogWrite(PIN_MOSFET_B_HI, 0);
-
-        analogWrite(PIN_MOSFET_C_LO, 0);
-        analogWrite(PIN_MOSFET_C_HI, 0);
-
-        analogWrite(PIN_MOSFET_A_HI, dutyCycle);
-        digitalWrite(PIN_MOSFET_B_LO, HIGH);
-    } else if (hallA && hallB && !hallC) {
-        analogWrite(PIN_MOSFET_A_LO, 0);
-
-        analogWrite(PIN_MOSFET_B_LO, 0);
-        analogWrite(PIN_MOSFET_B_HI, 0);
-
-        analogWrite(PIN_MOSFET_C_HI, 0);
-
-        analogWrite(PIN_MOSFET_A_HI, dutyCycle);
-        digitalWrite(PIN_MOSFET_C_LO, HIGH);
-    } else if (!hallA && hallB && !hallC) {
-        analogWrite(PIN_MOSFET_A_LO, 0);
-        analogWrite(PIN_MOSFET_A_HI, 0);
-
-        analogWrite(PIN_MOSFET_B_LO, 0);
-
-        analogWrite(PIN_MOSFET_C_HI, 0);
-
         analogWrite(PIN_MOSFET_B_HI, dutyCycle);
         digitalWrite(PIN_MOSFET_C_LO, HIGH);
-    } else if (!hallA && hallB && hallC) {
+        analogWrite(PIN_MOSFET_C_HI, 0);
+        break;
+
+    case 0b011:
+        digitalWrite(PIN_MOSFET_A_LO, HIGH);
         analogWrite(PIN_MOSFET_A_HI, 0);
-
         analogWrite(PIN_MOSFET_B_LO, 0);
-
+        analogWrite(PIN_MOSFET_B_HI, dutyCycle);
         analogWrite(PIN_MOSFET_C_LO, 0);
         analogWrite(PIN_MOSFET_C_HI, 0);
+        break;
 
+    case 0b001:
         digitalWrite(PIN_MOSFET_A_LO, HIGH);
-        analogWrite(PIN_MOSFET_B_HI, dutyCycle);
-    } else if (!hallA && !hallB && hallC) {
         analogWrite(PIN_MOSFET_A_HI, 0);
-
         analogWrite(PIN_MOSFET_B_LO, 0);
         analogWrite(PIN_MOSFET_B_HI, 0);
-
         analogWrite(PIN_MOSFET_C_LO, 0);
-
-        digitalWrite(PIN_MOSFET_A_LO, HIGH);
         analogWrite(PIN_MOSFET_C_HI, dutyCycle);
+        break;
+
+    case 0b101:
+        analogWrite(PIN_MOSFET_A_LO, 0);
+        analogWrite(PIN_MOSFET_A_HI, 0);
+        digitalWrite(PIN_MOSFET_B_LO, HIGH);
+        analogWrite(PIN_MOSFET_B_HI, 0);
+        analogWrite(PIN_MOSFET_C_LO, 0);
+        analogWrite(PIN_MOSFET_C_HI, dutyCycle);
+        break;
+
+    case 0b100:
+        analogWrite(PIN_MOSFET_A_LO, 0);
+        analogWrite(PIN_MOSFET_A_HI, dutyCycle);
+        digitalWrite(PIN_MOSFET_B_LO, HIGH);
+        analogWrite(PIN_MOSFET_B_HI, 0);
+        analogWrite(PIN_MOSFET_C_LO, 0);
+        analogWrite(PIN_MOSFET_C_HI, 0);
+        break;
+
+    case 0b110:
+        analogWrite(PIN_MOSFET_A_LO, 0);
+        analogWrite(PIN_MOSFET_A_HI, dutyCycle);
+        analogWrite(PIN_MOSFET_B_LO, 0);
+        analogWrite(PIN_MOSFET_B_HI, 0);
+        digitalWrite(PIN_MOSFET_C_LO, HIGH);
+        analogWrite(PIN_MOSFET_C_HI, 0);
+        break;
+
+    default:
+        analogWrite(PIN_MOSFET_A_LO, 0);
+        analogWrite(PIN_MOSFET_A_HI, 0);
+        analogWrite(PIN_MOSFET_B_LO, 0);
+        analogWrite(PIN_MOSFET_B_HI, 0);
+        analogWrite(PIN_MOSFET_C_LO, 0);
+        analogWrite(PIN_MOSFET_C_HI, 0);
+        break;
     }
 }
